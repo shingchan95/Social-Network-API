@@ -8,7 +8,7 @@ module.exports = {
       .catch((err) => res.status(500).json(err));
   },
 
-  getSinglecourse(req, res) {
+  getSinglethought(req, res) {
     Thought.findOne({ _id: req.params.thoughtId })
       .select('-__v')
       .then((thought) =>
@@ -21,12 +21,26 @@ module.exports = {
 
   createThought(req, res) {
     Thought.create(req.body)
-      .then((thought) => res.json(thought))
+      .then((thought) => {
+        return User.findOneAndUpdate(
+          { _id: req.body.userId },
+          { $addToSet: { thoughts: thought._id } },
+          { runValidators: true, new: true }
+        );
+      })
+      .then((user) =>
+        !user
+          ? res.status(404).json({
+              message: 'Thought created, but found no user with that ID',
+            })
+          : res.json('Created the thought 🎉')
+      )
       .catch((err) => {
         console.log(err);
-        return res.status(500).json(err);
+        res.status(500).json(err);
       });
   },
+
   updateThought(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
@@ -83,7 +97,7 @@ module.exports = {
         { $pull: { reactions: { reactionId: req.params.reactionId } } },
         { runValidators: true, new: true }
       )
-        .then((though) =>
+        .then((thought) =>
           !thought
             ? res
                 .status(404)
