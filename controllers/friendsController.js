@@ -22,15 +22,16 @@ module.exports = {
   deletefriends(req, res) {
     User.findOneAndUpdate(
         { _id: req.params.userId },
-        { $pull: { friends: { userId: req.params.userId } } },
+        { $pull: { friends: { _id: req.params.deletefriendsId } } },
         { runValidators: true, new: true }
       )
+      
         .then((user) =>
           !user
             ? res
                 .status(404)
                 .json({ message: 'No user found with that ID :(' })
-            : res.json(user)
+            : res.json(user) 
         )
         .catch((err) => res.status(500).json(err));
     },
