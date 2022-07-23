@@ -31,3 +31,4 @@ THEN I am able to successfully create and delete reactions to thoughts and add a
 
 ## walkthrough video
 
+https://watch.screencastify.com/v/a7FKdko4w4ueOHmlOabI
